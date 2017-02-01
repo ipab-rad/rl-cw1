@@ -1,59 +1,66 @@
 import copy
-
-
 import cv2
 import numpy as np
 
 
-class State:
-    def __init__(self, grid, collision):
-        self.grid = grid
-        self.collision = collision
-
-    def draw(self, sz=40):
-        [h, w] =self.grid.shape
+class EnvironmentState:
+    @staticmethod
+    def draw(grid, sz=40):
+        [h, w] = grid.shape
         image = np.ones((h * sz, w * sz, 3), np.uint8)
         for i in range(h):
             for j in range(w):
-                if self.grid[i][j] == 2:
+                if grid[i][j] == 2:
                     cv2.rectangle(image,
-                                (j * sz, i * sz),
-                                ((j + 1) * sz, (i + 1) * sz),
-                                (0x0F, 0x70, 0x50),
-                                -1)
-                elif self.grid[i][j] == 1:
+                                  (j * sz, i * sz),
+                                  ((j + 1) * sz, (i + 1) * sz),
+                                  (0x0F, 0x70, 0x50),
+                                  -1)
+                elif grid[i][j] == 1:
                     cv2.rectangle(image,
-                                (j * sz, i * sz),
-                                ((j + 1) * sz, (i + 1) * sz),
-                                (0x43, 0x04, 0xAE),
-                                -1)
+                                  (j * sz, i * sz),
+                                  ((j + 1) * sz, (i + 1) * sz),
+                                  (0x43, 0x04, 0xAE),
+                                  -1)
         for i in range(h):
             cv2.line(image,
-                    (0, i * sz),
-                    (image.shape[1], i * sz),
-                    (0xE8, 0xE8, 0xE8), 1)
+                     (0, i * sz),
+                     (image.shape[1], i * sz),
+                     (0xE8, 0xE8, 0xE8), 1)
 
         for i in range(w):
             cv2.line(image,
-                    (i * sz, 0),
-                    (i * sz, image.shape[0]),
-                    (0xE8, 0xE8, 0xE8), 1)
+                     (i * sz, 0),
+                     (i * sz, image.shape[0]),
+                     (0xE8, 0xE8, 0xE8), 1)
 
         return cv2.flip(image, 0)
 
+
 class StateExtractor:
-    def run(self, image, draw=False, scale=1.0):
+    def __init__(self, ale):
+        self._ale = ale
+
+    def run(self, draw=False, scale=1.0):
+        image = self.__getScreenImage()
+        # Use an image copy for processing
         img = self.__removeOffroadRegions(np.copy(image))
         self._road_grid = self.__detectRoadGrid(img)
-        self._cars = self.__detectCars(img * self.__getRoadMask(img, self._road_grid))
-        (self._state_grid, self._collision) = \
-            self.__getStateGrid(self._road_grid, self._cars)
+        self._cars = self.__detectCars(
+            img * self.__getRoadMask(img, self._road_grid))
+
+        self._state_grid = self.__getStateGrid(self._road_grid, self._cars)
 
         if draw:
             self.__draw(image, scale)
 
-        s = State(self._state_grid, self._collision)
-        return s
+        return (self._state_grid, image)
+
+    def __getScreenImage(self):
+        [w, h] = self._ale.getScreenDims()
+        image = cv2.cvtColor(self._ale.getScreenRGB(), cv2.COLOR_RGB2BGR)
+        image = cv2.resize(image, (h, w), interpolation=cv2.INTER_NEAREST)
+        return image
 
     def __removeOffroadRegions(self, image):
         # This pixel always has the color of the background
@@ -61,7 +68,7 @@ class StateExtractor:
         offroad_color = image[offroad_pt[1], offroad_pt[0], :]
         mask = np.logical_or(
             np.logical_or(image[:, :, 0] != offroad_color[0],
-                        image[:, :, 1] != offroad_color[1]),
+                          image[:, :, 1] != offroad_color[1]),
             image[:, :, 2] != offroad_color[2])
         return image * mask.reshape(image.shape[0], image.shape[1], -1)
 
@@ -77,11 +84,15 @@ class StateExtractor:
 
     def __detectRoadGrid(self, image):
         grid = []
-        for rel_h in [0.3, 0.33, 0.37, 0.42, 0.48, 0.55, 0.63, 0.7]:
+
+        hs = [0.33, 0.34, 0.36, 0.38, 0.4, 0.43,
+              0.46, 0.49, 0.53, 0.57, 0.63, 0.7]
+
+        for rel_h in hs:
             line = []
             y = int(rel_h * image.shape[0])
             [l, r] = self.__intersectRoad(image, y)
-            for rel_w in [0.01 * x for x in range(0, 101, 5)]:
+            for rel_w in [0.01 * x for x in range(0, 101, 10)]:
                 x = int((1 - rel_w) * l + rel_w * r)
                 line.append([x, y])
             grid.append(line)
@@ -121,7 +132,7 @@ class StateExtractor:
         # Find player's car pixels
         mask = np.logical_and(
             np.logical_and(image[:, :, 0] > 180,
-                        image[:, :, 1] > 180),
+                           image[:, :, 1] > 180),
             image[:, :, 2] > 180).reshape(image.shape[0], image.shape[1], -1)
 
         # Detect the contour of the player's car
@@ -155,7 +166,7 @@ class StateExtractor:
         def inCell(i, j, pt):
             c = np.asarray(
                 [grid[i][j], grid[i + 1][j],
-                grid[i + 1][j + 1], grid[i][j + 1]])
+                 grid[i + 1][j + 1], grid[i][j + 1]])
             return cv2.pointPolygonTest(c, pt, False) >= 0
 
         def getCell(pt):
@@ -170,43 +181,41 @@ class StateExtractor:
         pos_y = len(grid) - pos_y - 2
         state[pos_y, pos_x] = 2
 
-        collision = False
         for c in cars["others"]:
             (pos_y, pos_x) = getCell(center(c))
             pos_y = len(grid) - pos_y - 2
 
             # Colision ocurred
-            if not collision:
-                while state[pos_y, pos_x] == 2:
-                    collision = True
-                    pos_y += 1
+            while state[pos_y, pos_x] == 2:
+                pos_y += 1
 
             state[pos_y, pos_x] = 1
 
-        return (state, collision)
+        return state
 
     def __drawRoadGrid(self, image, grid, scale=1.0):
         for i in range(len(grid) - 1):
             cv2.line(image,
-                    tuple((np.asarray(grid[i][0]) * scale).astype(int)),
-                    tuple((np.asarray(grid[i][-1]) * scale).astype(int)),
-                    (0xE8, 0xE8, 0xE8))
+                     tuple((np.asarray(grid[i][0]) * scale).astype(int)),
+                     tuple((np.asarray(grid[i][-1]) * scale).astype(int)),
+                     (0xE8, 0xE8, 0xE8))
             for j in range(len(grid[i])):
                 cv2.line(image,
-                        tuple((np.asarray(grid[i][j]) * scale).astype(int)),
-                        tuple((np.asarray(grid[i+1][j]) * scale).astype(int)),
-                        (0xE8, 0xE8, 0xE8))
+                         tuple((np.asarray(grid[i][j]) * scale).astype(int)),
+                         tuple((np.asarray(grid[i+1][j]) * scale).astype(int)),
+                         (0xE8, 0xE8, 0xE8))
         cv2.line(image,
-                tuple((np.asarray(grid[-1][0]) * scale).astype(int)),
-                tuple((np.asarray(grid[-1][-1]) * scale).astype(int)),
-                (0xE8, 0xE8, 0xE8))
+                 tuple((np.asarray(grid[-1][0]) * scale).astype(int)),
+                 tuple((np.asarray(grid[-1][-1]) * scale).astype(int)),
+                 (0xE8, 0xE8, 0xE8))
 
     def __drawCars(self, image, cars, scale=1.0, margin=0):
         def tl(r, d=margin):
             return (int(scale * r[0]) - d, int(scale * r[1]) - d)
 
         def br(r, d=margin):
-            return (int(scale * (r[0] + r[2])) + d, int(scale * (r[1] + r[3])) + d)
+            return (int(scale * (r[0] + r[2])) + d,
+                    int(scale * (r[1] + r[3])) + d)
 
         r = cars["self"]
         cv2.rectangle(image, tl(r), br(r), (0x0F, 0x70, 0x50), 2)
@@ -215,7 +224,7 @@ class StateExtractor:
             cv2.rectangle(image, tl(r), br(r), (0x43, 0x04, 0xAE), 2)
 
     def __draw(self, image, scale):
-        scaled_image = cv2.resize(image, None, fx=scale, fy=scale);
+        scaled_image = cv2.resize(image, None, fx=scale, fy=scale)
         if scaled_image.shape != image.shape:
             image.resize(scaled_image.shape, refcheck=False)
         np.copyto(image, scaled_image)
