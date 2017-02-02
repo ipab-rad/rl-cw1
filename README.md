@@ -2,7 +2,7 @@
 
 ## Writing your own agent
 
-### `Agent`
+### Agent
 
 In order to implement your own Enduro agent you should derive from the `enduro.Agent` class which provides the folloing functions:
 
@@ -16,7 +16,7 @@ Returns the set of possible actions: `[Action.ACCELERATE, Action.LEFT, Action.RI
 Executes the `action`, advances the game to the next time step and **returns the received reward**.  
 **NOTE:**  Make sure you use the action constants and **not** integers from 0 to 2, or any other encoding.
 
-### `Agent` sublclasses
+### Agent sublclasses
 The `enduro.Agent` class requires the following functions to be implemented by the subclass:
 
 * `def initialise(self, grid)`  
@@ -39,7 +39,13 @@ In order to keep the `enduro.Agent` class as generic as possible it does not hav
 ## Environment grid
 The environment grid is a 11x10 Numpy array, where a cell contains 1 if the agent is at that position, 2 if there is an opponent car at that postion or 0 if the space is free. Your agent is always at row 0 while the most distant opponents are at row 10. The leftmost position on the road corresponds to column 0 while the rightmost one - to column 9.
 
-## Setup & Requirements
+## Example
+A simple keyboard controlled agent is provided as an example. You can run it with
+```
+python keyboard_agent.py
+```
+Make sure you run the command from the root directory of this repository.
 
-This package depends on OpenCV 2 and the Arcade Learning Environment. OpenCV installation is OS and distribution dependent, so you should find out how to do it for your own system. Installation instructions for the Arcade Learning Environment can be found [here](https://github.com/mgbellemare/Arcade-Learning-Environment#quick-start).
+## Setup & Requirements
+This pacakge should run out of the box on a DICE machine, however if you want to install it on your own computer then you should have OpenCV 2 and the Arcade Learning Environment installed. OpenCV installation is OS and distribution dependent, so you should find out how to do it for your own system. Installation instructions for the Arcade Learning Environment can be found [here](https://github.com/mgbellemare/Arcade-Learning-Environment#quick-start). Make sure you use Python2 for running your agents.
 
