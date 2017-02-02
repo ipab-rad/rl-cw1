@@ -40,8 +40,7 @@ class Agent(object):
 
 
     def getActionsSet(self):
-        return [Action.ACCELERATE, Action.BREAK,
-                Action.RIGHT, Action.LEFT]
+        return [Action.ACCELERATE, Action.RIGHT, Action.LEFT]
 
     def move(self, action):
         return self._controller.move(action)

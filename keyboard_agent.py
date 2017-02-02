@@ -26,8 +26,6 @@ class KeyboardAgent(Agent):
             action = Action.RIGHT
         if chr(key & 255) == 'w':
             action = Action.ACCELERATE
-        if chr(key & 255) == 's':
-            action = Action.BREAK
 
         # Execute the action and get the received reward signal
         # IMPORTANT NOTE:
