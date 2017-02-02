@@ -4,9 +4,9 @@ from enduro.action import Action
 from enduro.state import EnvironmentState
 
 
-class QAgent(Agent):
+class RandomAgent(Agent):
     def __init__(self):
-        super(QAgent, self).__init__()
+        super(RandomAgent, self).__init__()
         # Add member variables to your class here
         self.total_reward = 0
 
@@ -57,6 +57,6 @@ class QAgent(Agent):
             cv2.waitKey(40)
 
 if __name__ == "__main__":
-    a = QAgent()
+    a = RandomAgent()
     a.run(True, episodes=2, draw=True)
     print 'Total reward: ' + str(a.total_reward)
