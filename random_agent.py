@@ -28,7 +28,7 @@ class RandomAgent(Agent):
         # Execute the action and get the received reward signal
         # IMPORTANT NOTE:
         # 'action' must be one of the values in the actions set,
-        # i.e. Action.LEFT, Action.RIGHT or Action.ACCELERATE
+        # i.e. Action.LEFT, Action.RIGHT, Action.ACCELERATE or Action.BREAK
         # Do not use plain integers between 0 - 3 as it will not work
         # self.total_reward += self.move(action)
 
