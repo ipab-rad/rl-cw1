@@ -10,7 +10,7 @@ In order to implement your own Enduro agent you should derive from the `Agent` c
 Implements the playing/learning loop and calls the corresponding functions implemented by the sublclasses. If `learn` is set to `True` then the `learn()` will be called at every time step. `episodes` is the number of episodes for which the agent should be run.
 
 * `def getActionsSet(self)`  
-Returns the set of possible actions: `[Action.ACCELERATE, Action.LEFT, Action.RIGHT]`
+Returns the set of possible actions: `[Action.ACCELERATE, Action.RIGHT, Action.LEFT, Action.BREAK]`
 
 * `def move(self, action)`  
 Executes the `action`, advances the game to the next time step and **returns the received reward**.  
