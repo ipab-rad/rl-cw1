@@ -10,6 +10,13 @@ class QAgent(Agent):
         # Add member variables to your class here
         self.total_reward = 0
 
+    def initialise(self, grid):
+        """ Called at the beginning of an episode. Use it to construct
+        the initial state.
+        """
+        # Reset the total reward for the episode
+        self.total_reward = 0
+
     def act(self):
         """ Implements the decision making process for selecting
         an action. Remember to store the obtained reward.
@@ -20,17 +27,10 @@ class QAgent(Agent):
 
         # Execute the action and get the received reward signal
         # IMPORTANT NOTE:
-        # 'action' must be one of the values in the actions set, i.e.
-        # Action.LEFT, Action.RIGHT, Action.ACCELERATE or Action.BREAK
+        # 'action' must be one of the values in the actions set,
+        # i.e. Action.LEFT, Action.RIGHT or Action.ACCELERATE
         # Do not use plain integers between 0 - 3 as it will not work
         # self.total_reward += self.move(action)
-
-    def initialise(self, grid):
-        """ Called at the beginning of an episode. Use it to construct
-        the initial state.
-        """
-        # Reset the total reward for the episode
-        self.total_reward = 0
 
     def sense(self, grid):
         """ Constructs the next state from sensory signals.
@@ -42,7 +42,7 @@ class QAgent(Agent):
         cv2.imshow("Environment Grid", EnvironmentState.draw(grid))
 
     def learn(self):
-        """ Performs any learning procudre. It is called after act() and
+        """ Performs the learning procudre. It is called after act() and
         sense() so you have access to the latest tuple (s, s', a, r).
         """
         pass
