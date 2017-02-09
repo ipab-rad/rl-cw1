@@ -40,6 +40,7 @@ class EnvironmentState:
 class StateExtractor:
     def __init__(self, ale):
         self._ale = ale
+        self._is_cv3 = cv2.__version__.startswith("3.")
 
     def run(self, draw=False, scale=1.0):
         image = self.__getScreenImage()
@@ -138,8 +139,13 @@ class StateExtractor:
         # Detect the contour of the player's car
         _, thresh = cv2.threshold(
             cv2.cvtColor(image * mask, cv2.COLOR_BGR2GRAY), 170, 255, 0)
-        contours, hierarchy = cv2.findContours(
-            thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+        if self._is_cv3:
+            _, contours, hierarchy = cv2.findContours(
+                thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        else:
+            contours, hierarchy = cv2.findContours(
+                thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
         # Make s
         if len(contours) == 0:
@@ -153,8 +159,14 @@ class StateExtractor:
         mask = np.logical_not(mask)
         _, thresh = cv2.threshold(
             cv2.cvtColor(image * mask, cv2.COLOR_BGR2GRAY), 64, 255, 0)
-        contours, hierarchy = cv2.findContours(
-            thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+        if self._is_cv3:
+            _, contours, hierarchy = cv2.findContours(
+                thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        else:
+            contours, hierarchy = cv2.findContours(
+                thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
         res["others"] = [cv2.boundingRect(c) for c in contours]
         return res
 

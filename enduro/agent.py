@@ -9,6 +9,7 @@ class Agent(object):
         self._ale = ALEInterface()
         self._ale.setInt('random_seed', 123)
         self._ale.setFloat('repeat_action_probability', 0.0)
+        self._ale.setBool('color_averaging', False)
         self._ale.loadROM('roms/enduro.bin')
         self._controller = Controller(self._ale)
         self._extractor = StateExtractor(self._ale)
