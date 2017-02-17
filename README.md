@@ -53,3 +53,43 @@ If you have any questions directly related to the code you can simply submit an 
 ## Setup & Requirements
 This pacakge should run out of the box on a DICE machine, however if you want to install it on your own computer then you should have OpenCV 2 and the Arcade Learning Environment installed. OpenCV installation is OS and distribution dependent, so you should find out how to do it for your own system. Installation instructions for the Arcade Learning Environment can be found [here](https://github.com/mgbellemare/Arcade-Learning-Environment#quick-start). Make sure you use Python2 for running your agents.
 
+### Setup on Ubuntu 16.04
+These are the steps you should follow in order to setup OpenCV, ALE and the coursework package on a clean Ubuntu 16.04. You might want to use them to prepare a virtual machine and work on it, instead of a DICE machine.
+
+```
+sudo apt-get install build-essential cmake pkg-config git
+sudo apt-get install libjpeg8-dev libtiff5-dev libjasper-dev libpng12-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt-get install libxvidcore-dev libx264-dev
+sudo apt-get install libgtk-3-dev
+sudo apt-get install libatlas-base-dev gfortran
+sudo apt-get install python2.7-dev python3.5-dev python-pip
+sudo pip install numpy
+
+cd ~
+wget -O opencv-3.2.0.zip https://github.com/Itseez/opencv/archive/3.2.0.zip
+unzip opencv-3.2.0.zip 
+cd opencv-3.2.0/
+mkdir build
+cd build/
+cmake ..
+make -j4
+sudo make install
+
+cd ~
+sudo apt-get install libsdl1.2-dev libsdl-gfx1.2-dev libsdl-image1.2-dev
+git clone https://github.com/mgbellemare/Arcade-Learning-Environment.git
+cd Arcade-Learning-Environment/
+mkdir build
+cd build/
+cmake -DUSE_SDL=ON -DUSE_RLGLUE=OFF -DBUILD_EXAMPLES=ON ..
+make -j4
+cd ..
+sudo pip install .
+
+cd ~
+git clone https://github.com/ipab-rad/rl-cw1.git
+cd rl-cw1/
+python keyboard_agent.py 
+```
+
