@@ -17,6 +17,9 @@ class KeyboardAgent(Agent):
         # Reset the total reward for the episode
         self.total_reward = 0
 
+        cv2.imshow("Enduro", self._image)
+        cv2.imshow("Environment Grid", EnvironmentState.draw(grid))
+
     def act(self):
         """ Implements the decision making process for selecting
         an action. Remember to store the obtained reward.
