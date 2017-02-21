@@ -37,7 +37,7 @@ This function is called at every iteration during the plying/learning loop and i
 In order to keep the `Agent` class as generic as possible it does not have member variables such as the current state, action, next state or reward. Your subclass should keep track of those and update them accordingly. Remember to initalise them in the constructor of your class.
 
 ## Environment grid
-The environment grid is a 11x10 Numpy array, where a cell contains 1 if the agent is at that position, 2 if there is an opponent car at that postion or 0 if the space is free. Your agent is always at row 0 while the most distant opponents are at row 10. The leftmost position on the road corresponds to column 0 while the rightmost one - to column 9.
+The environment grid is a 11x10 Numpy array, where a cell contains 2 if the agent is at that position, 1 if there is an opponent car at that postion or 0 if the space is free. Your agent is always at row 0 while the most distant opponents are at row 10. The leftmost position on the road corresponds to column 0 while the rightmost one - to column 9.
 
 ## Example
 A simple keyboard controlled agent is provided as an example. You can run it with
