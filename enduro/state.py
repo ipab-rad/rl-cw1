@@ -147,7 +147,6 @@ class StateExtractor:
             contours, hierarchy = cv2.findContours(
                 thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-        # Make s
         if len(contours) == 0:
             return res
         else:
@@ -158,7 +157,7 @@ class StateExtractor:
         # Detect the other cars
         mask = np.logical_not(mask)
         _, thresh = cv2.threshold(
-            cv2.cvtColor(image * mask, cv2.COLOR_BGR2GRAY), 64, 255, 0)
+            cv2.cvtColor(image * mask, cv2.COLOR_BGR2GRAY), 80, 255, 0)
 
         if self._is_cv3:
             _, contours, hierarchy = cv2.findContours(

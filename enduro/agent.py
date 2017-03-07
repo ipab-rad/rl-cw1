@@ -52,7 +52,7 @@ class Agent(object):
     def getActionsSet(self):
         """ Returns the set of all possible actions
         """
-        return [Action.ACCELERATE, Action.RIGHT, Action.LEFT, Action.BREAK]
+        return [Action.ACCELERATE, Action.RIGHT, Action.LEFT, Action.BRAKE]
 
     def move(self, action):
         """ Executes the action and advances the game to the next state.

@@ -1,7 +1,7 @@
 class Action:
     NOOP = 0        # NOOP
     ACCELERATE = 1  # FIRE
-    BREAK = 5       # DOWN
+    BRAKE = 5       # DOWN
     RIGHT = 11      # RIGHT_FIRE
     LEFT = 12       # LEFT_FIRE
 
@@ -10,6 +10,6 @@ class Action:
         return {
             0: 'NOOP',
             1: 'ACCELERATE',
-            5: 'BREAK',
+            5: 'BRAKE',
             11: 'RIGHT',
             12: 'LEFT'}[a]
