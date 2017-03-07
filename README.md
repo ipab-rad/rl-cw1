@@ -50,7 +50,7 @@ Make sure you run the command from the root directory of this repository.
 
 The state representation for the Q-learning agent of the proposed solution is a 2-dimensional vector which contains the x-cooridinate of the agent and the x-cooridinate of the closest opponent car incremented by one. If no opponents are present then the second component of the state vector is set to 0. During action selection, the agent is epsilon greedy with `epsilon=0.01` where a random action is selected through softmax sampling. After learning for 500 episodes the following results are obtained:
 
-![Results](https://raw.githubusercontent.com/ipab-rad/rl-cw1/master/figs/results.svg)
+![Results](https://raw.githubusercontent.com/ipab-rad/rl-cw1/master/figs/results.png)
 
 You can inspect the results with:
 
