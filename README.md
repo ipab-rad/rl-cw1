@@ -46,9 +46,17 @@ python keyboard_agent.py
 ```
 Make sure you run the command from the root directory of this repository.
 
-## Questions
+## Solution & Results
 
-If you have any questions directly related to the code you can simply submit an issue to the repository.
+The state representation for the Q-learning agent of the proposed solution is a 2-dimensional vector which contains the x-cooridinate of the agent and the x-cooridinate of the closest opponent car incremented by one. If no opponents are present then the second component of the state vector is set to 0. During action selection, the agent is epsilon greedy with `epsilon=0.01` where a random action is selected through softmax sampling. After learning for 500 episodes the following results are obtained:
+
+![Results](https://raw.githubusercontent.com/ipab-rad/rl-cw1/master/figs/results.svg)
+
+You can inspect the results with:
+
+```
+python plot_log.py
+```
 
 ## Setup & Requirements
 This pacakge should run out of the box on a DICE machine, however if you want to install it on your own computer then you should have OpenCV 2 and the Arcade Learning Environment installed. OpenCV installation is OS and distribution dependent, so you should find out how to do it for your own system. Installation instructions for the Arcade Learning Environment can be found [here](https://github.com/mgbellemare/Arcade-Learning-Environment#quick-start). Make sure you use Python2 for running your agents.
